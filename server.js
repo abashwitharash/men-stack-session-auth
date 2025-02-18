@@ -17,6 +17,9 @@ const morgan = require("morgan");
 // }
 const port = process.env.PORT ? process.env.PORT : "3000";
 
+// brings in the auth.js file - any routes we define in that folder
+const authController = require("./controllers/auth.js");
+
 mongoose.connect(process.env.MONGODB_URI);
 
 mongoose.connection.on("connected", () => {
@@ -29,6 +32,17 @@ app.use(express.urlencoded({ extended: false }));
 app.use(methodOverride("_method"));
 // Morgan for logging HTTP requests
 app.use(morgan('dev'));
+
+// app use 
+app.use('/auth', authController);
+
+// GET /
+app.get("/", async (req, res) => {
+    res.render("index.ejs");
+  });
+  
+
+
 
 app.listen(port, () => {
   console.log(`The express app is ready on port ${port}!`);
