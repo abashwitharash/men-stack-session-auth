@@ -1,6 +1,7 @@
 const dotenv = require("dotenv");
 dotenv.config();
 const express = require("express");
+const session = require("express-session");
 const app = express();
 
 const mongoose = require("mongoose");
@@ -32,14 +33,24 @@ app.use(express.urlencoded({ extended: false }));
 app.use(methodOverride("_method"));
 // Morgan for logging HTTP requests
 app.use(morgan('dev'));
+app.use(
+    session({
+      secret: process.env.SESSION_SECRET,
+      resave: false,
+      saveUninitialized: true,
+    })
+  );
 
 // app use 
 app.use('/auth', authController);
 
 // GET /
-app.get("/", async (req, res) => {
-    res.render("index.ejs");
+app.get("/", (req, res) => {
+    res.render("index.ejs", {
+      user: req.session.user,
+    });
   });
+  
   
 
 
